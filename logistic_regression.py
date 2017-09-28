@@ -91,14 +91,23 @@ def firt_task():
 	y = np.concatenate((y_train,y_test))
 	y = [item[0] for item in y]
 
-	print(cross_val_score(logreg, X, y))  
+	print(cross_val_score(logreg, X, y, cv=10,verbose=True))  
 	# test score : 0.390 
 
 	# cv results
-	# [Parallel(n_jobs=1)]: Done   1 out of   1 | elapsed:  1.7min finished
-	# [Parallel(n_jobs=1)]: Done   1 out of   1 | elapsed:  1.1min finished
-	# [Parallel(n_jobs=1)]: Done   1 out of   1 | elapsed:  1.2min finished
-	# [ 0.3888  0.3948  0.3911]
+	#[Parallel(n_jobs=1)]: Done  10 out of  10 | elapsed:  5.3min finished
+	#[Parallel(n_jobs=1)]: Done  10 out of  10 | elapsed:  5.0min finished
+	#[Parallel(n_jobs=1)]: Done  10 out of  10 | elapsed:  5.2min finished
+	#[Parallel(n_jobs=1)]: Done  10 out of  10 | elapsed:  5.6min finished
+	#[Parallel(n_jobs=1)]: Done  10 out of  10 | elapsed:  5.4min finished
+	#[Parallel(n_jobs=1)]: Done  10 out of  10 | elapsed:  5.1min finished
+	#[Parallel(n_jobs=1)]: Done  10 out of  10 | elapsed:  5.3min finished
+	#[Parallel(n_jobs=1)]: Done  10 out of  10 | elapsed:  5.4min finished
+	#[Parallel(n_jobs=1)]: Done  10 out of  10 | elapsed:  5.4min finished
+	#[Parallel(n_jobs=1)]: Done  10 out of  10 | elapsed:  5.2min finished
+	#[Parallel(n_jobs=1)]: Done  10 out of  10 | elapsed: 53.3min finished
+	#[ 0.38883333  0.39416667  0.37966667  0.39983333  0.39183333  0.38566667
+	#  0.38883333  0.38666667  0.38966667  0.38333333]
 
 
 def second_task():
@@ -106,7 +115,7 @@ def second_task():
 
 if __name__ == '__main__':
 	#firt_task()
-	second_task()
+	firt_task()
 
 
 
