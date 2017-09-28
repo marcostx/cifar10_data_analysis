@@ -45,51 +45,68 @@ def img2array(image):
 #data_augmentation 	= True
 #num_predictions 	= 20
 
+def firt_task():
+	"""
+		
+		Perform Logistic Regression as the baseline (first solution) to learn 
+		the 10 classes in the dataset. Use one-vs-all strategy to build a 
+		classification model.
 
-# loading splitted dataset 
-(x_train, y_train), (x_test, y_test) = cifar10.load_data()
-x_train = x_train.reshape((-1, 32 * 32 * 3))
-x_test = x_test.reshape((-1, 32 * 32 * 3))
-
-x_train = StandardScaler().fit_transform(x_train)
-x_test =  StandardScaler().fit_transform(x_test)
-
-
-print('x_train shape:', x_train.shape)
-print(x_train.shape[0], 'train samples')
-print(x_test.shape[0], 'test samples')
-
-logreg = linear_model.LogisticRegression(solver='lbfgs', max_iter=100, random_state=42,verbose=1,
-                             multi_class='multinomial')
-
-#logreg.fit(x_train, y_train)
-
-#predictions = logreg.predict(x_test)
-
-# print the training scores
-#print("training score : %.3f " % logreg.score(x_train, y_train))
-#print("test score : %.3f " % accuracy_score(y_test,predictions))
-
-# results
-# training score : 0.477 
-
-# using cross validation
-#logreg = linear_model.LogisticRegression(solver='lbfgs', max_iter=100, random_state=42,verbose=1,
-#                             multi_class='multinomial')
+	"""
 
 
-X = np.concatenate((x_train,x_test))
-y = np.concatenate((y_train,y_test))
-y = [item[0] for item in y]
+	# loading splitted dataset 
+	(x_train, y_train), (x_test, y_test) = cifar10.load_data()
+	x_train = x_train.reshape((-1, 32 * 32 * 3))
+	x_test = x_test.reshape((-1, 32 * 32 * 3))
 
-print(cross_val_score(logreg, X, y))  
-# test score : 0.390 
+	x_train = StandardScaler().fit_transform(x_train)
+	x_test =  StandardScaler().fit_transform(x_test)
 
-# cv results
-# [Parallel(n_jobs=1)]: Done   1 out of   1 | elapsed:  1.7min finished
-# [Parallel(n_jobs=1)]: Done   1 out of   1 | elapsed:  1.1min finished
-# [Parallel(n_jobs=1)]: Done   1 out of   1 | elapsed:  1.2min finished
-# [ 0.3888  0.3948  0.3911]
+
+	print('x_train shape:', x_train.shape)
+	print(x_train.shape[0], 'train samples')
+	print(x_test.shape[0], 'test samples')
+
+	logreg = linear_model.LogisticRegression(solver='lbfgs', max_iter=100, random_state=42,verbose=1,
+	                             multi_class='ovr')
+
+	#logreg.fit(x_train, y_train)
+
+	#predictions = logreg.predict(x_test)
+
+	# print the training scores
+	#print("training score : %.3f " % logreg.score(x_train, y_train))
+	#print("test score : %.3f " % accuracy_score(y_test,predictions))
+
+	# results
+	# training score : 0.477 
+
+	# using cross validation
+	#logreg = linear_model.LogisticRegression(solver='lbfgs', max_iter=100, random_state=42,verbose=1,
+	#                             multi_class='multinomial')
+
+
+	X = np.concatenate((x_train,x_test))
+	y = np.concatenate((y_train,y_test))
+	y = [item[0] for item in y]
+
+	print(cross_val_score(logreg, X, y))  
+	# test score : 0.390 
+
+	# cv results
+	# [Parallel(n_jobs=1)]: Done   1 out of   1 | elapsed:  1.7min finished
+	# [Parallel(n_jobs=1)]: Done   1 out of   1 | elapsed:  1.1min finished
+	# [Parallel(n_jobs=1)]: Done   1 out of   1 | elapsed:  1.2min finished
+	# [ 0.3888  0.3948  0.3911]
+
+
+def second_task():
+	pass
+
+if __name__ == '__main__':
+	#firt_task()
+	second_task()
 
 
 
