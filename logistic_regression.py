@@ -45,7 +45,7 @@ def img2array(image):
 #data_augmentation 	= True
 #num_predictions 	= 20
 
-def firt_task():
+def firt_task(x_train,x_test,y_train,y_test):
 	"""
 		
 		Perform Logistic Regression as the baseline (first solution) to learn 
@@ -53,12 +53,6 @@ def firt_task():
 		classification model.
 
 	"""
-
-
-	# loading splitted dataset 
-	(x_train, y_train), (x_test, y_test) = cifar10.load_data()
-	x_train = x_train.reshape((-1, 32 * 32 * 3))
-	x_test = x_test.reshape((-1, 32 * 32 * 3))
 
 	x_train = StandardScaler().fit_transform(x_train)
 	x_test =  StandardScaler().fit_transform(x_test)
@@ -110,12 +104,72 @@ def firt_task():
 	#  0.38883333  0.38666667  0.38966667  0.38333333]
 
 
-def second_task():
-	pass
+def second_task(x_train,x_test,y_train,y_test):
+	"""
+		
+		Perform Multinomial Logistic Regression (i.e., Softmax regression). 
+		It is a generalization of Logistic Regression to the case where we 
+		want to handle multiple classes
+
+	"""
+
+	x_train = StandardScaler().fit_transform(x_train)
+	x_test =  StandardScaler().fit_transform(x_test)
+
+
+	print('x_train shape:', x_train.shape)
+	print(x_train.shape[0], 'train samples')
+	print(x_test.shape[0], 'test samples')
+
+	logreg = linear_model.LogisticRegression(solver='lbfgs', max_iter=100, random_state=42,verbose=1,
+	                             multi_class='multinomial')
+
+	#logreg.fit(x_train, y_train)
+
+	#predictions = logreg.predict(x_test)
+
+	# print the training scores
+	#print("training score : %.3f " % logreg.score(x_train, y_train))
+	#print("test score : %.3f " % accuracy_score(y_test,predictions))
+
+	# results
+	# training score : 0.477 
+
+	# using cross validation
+	#logreg = linear_model.LogisticRegression(solver='lbfgs', max_iter=100, random_state=42,verbose=1,
+	#                             multi_class='multinomial')
+
+
+	X = np.concatenate((x_train,x_test))
+	y = np.concatenate((y_train,y_test))
+	y = [item[0] for item in y]
+
+	print(cross_val_score(logreg, X, y, cv=10,verbose=True))  
+	# test score : 0.390 
+
+	# cv results
+	#[Parallel(n_jobs=1)]: Done   1 out of   1 | elapsed:  1.8min finished
+	#[Parallel(n_jobs=1)]: Done   1 out of   1 | elapsed:  2.0min finished
+	#[Parallel(n_jobs=1)]: Done   1 out of   1 | elapsed:  2.0min finished
+	#[Parallel(n_jobs=1)]: Done   1 out of   1 | elapsed:  1.8min finished
+	#[Parallel(n_jobs=1)]: Done   1 out of   1 | elapsed:  1.9min finished
+	#[Parallel(n_jobs=1)]: Done   1 out of   1 | elapsed:  2.1min finished
+	#[Parallel(n_jobs=1)]: Done   1 out of   1 | elapsed:  2.3min finished
+	#[Parallel(n_jobs=1)]: Done   1 out of   1 | elapsed:  2.3min finished
+	#[Parallel(n_jobs=1)]: Done   1 out of   1 | elapsed:  1.8min finished
+	#[Parallel(n_jobs=1)]: Done   1 out of   1 | elapsed:  1.8min finished
+	#[Parallel(n_jobs=1)]: Done  10 out of  10 | elapsed: 20.2min finished
+	#[ 0.399       0.39733333  0.38966667  0.411       0.408       0.40233333
+	#  0.39916667  0.40366667  0.40883333  0.39316667]
 
 if __name__ == '__main__':
 	#firt_task()
-	firt_task()
+	# loading splitted dataset 
+	(x_train, y_train), (x_test, y_test) = cifar10.load_data()
+	x_train = x_train.reshape((-1, 32 * 32 * 3))
+	x_test = x_test.reshape((-1, 32 * 32 * 3))
+
+	second_task(x_train,x_test,y_train,y_test)
 
 
 
