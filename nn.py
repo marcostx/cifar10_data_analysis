@@ -23,7 +23,7 @@ import cv2
 import tensorflow as tf
 
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import StratifiedKFold, train_test_split
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import StandardScaler
 from keras.datasets import cifar10
@@ -87,12 +87,12 @@ def third_task(x_train, x_test, y_train, y_test):
     print(x_train.shape[0], 'train samples')
     print(x_test.shape[0], 'test samples')
 
-    X_ = np.concatenate((x_train, x_test))
-    y_ = np.concatenate((y_train, y_test))
-    y_ = [item[0] for item in y_]
+    #X_ = np.concatenate((x_train, x_test))
+    #y_ = np.concatenate((y_train, y_test))
+    y_ = [item[0] for item in y_train]
     y_ = np.array(y_)
 
-    X_ = preprocessing(X_)
+    X_ = preprocessing(x_train)
 
     # inputs placeholders
     x = tf.placeholder(tf.float32, [None, input_shape])
@@ -124,10 +124,10 @@ def third_task(x_train, x_test, y_train, y_test):
     skf = StratifiedKFold(n_splits=10, shuffle=True)
     number = 0
     start = time.time()
-    for train_index, test_index in skf.split(X_, y_):
+    for train_index, val_index in skf.split(X_, y_):
 
-        X_train, X_test = X_[train_index], X_[test_index]
-        y_train_, y_test_ = y_[train_index], y_[test_index]
+        X_train, X_test = X_[train_index], X_[val_index]
+        y_train_, y_test_ = y_[train_index], y_[val_index]
 
         train_x = np.stack(X_train)
         print("Fold : ", number)
