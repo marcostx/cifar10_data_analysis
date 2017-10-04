@@ -36,7 +36,7 @@ import time
 from keras.utils import to_categorical
 from random import shuffle
 
-def create_model(num_classes,input_shape):
+def create_model_task_3(num_classes,input_shape):
     model = Sequential()
     model.add(Dense(512, activation='relu', input_shape=(input_shape,)))
     
@@ -46,6 +46,17 @@ def create_model(num_classes,input_shape):
 
     return model
 
+def create_model_task_4(num_classes,input_shape):
+    model = Sequential()
+    model.add(Dense(512, activation='relu', input_shape=(input_shape,)))
+    model.add(Dropout(0.2))
+    model.add(Dense(512, activation='relu'))
+    model.add(Dropout(0.2))
+    model.add(Dense(num_classes, activation='softmax'))
+
+    model.summary()
+
+    return model
 
 def preprocessing(X):
     X_prec = []
@@ -92,7 +103,7 @@ def third_task(x_train, x_test, y_train, y_test):
     X_ = x_train
     # init the variables
     accuracies,precisions,recalls, f1s=[],[],[],[]
-    init = tf.global_variables_initializer()
+    
     skf = StratifiedKFold(n_splits=10, shuffle=True)
     number = 0
     start = time.time()
@@ -104,7 +115,7 @@ def third_task(x_train, x_test, y_train, y_test):
         y_test_ = to_categorical(y_test_, num_classes)
 
         
-        model = create_model(num_classes,input_shape)
+        model = create_model_task_3(num_classes,input_shape)
         model.compile(loss='categorical_crossentropy',
                   optimizer=Adam(lr=0.0001),
                   metrics=['accuracy'])
@@ -122,15 +133,66 @@ def third_task(x_train, x_test, y_train, y_test):
 
         number += 1
 
-    print("Done.")
-
-    print("accuracy avg : ", np.mean(accuracies))
-    print("precision avg : ", np.mean(precisions))
-    print("recall avg : ", np.mean(recalls))
-    print("f1 avg : ", np.mean(f1s))
-
     print("it took", time.time() - start, "seconds.")
 
+def fourth_task(x_train, x_test, y_train, y_test):
+    """
+        
+        Extend your Neural Network to two hidden layers. 
+        Try diferent activation functions. Does the 
+        performance improve...
+
+
+    """
+
+
+    print('x_train shape:', x_train.shape)
+    print(x_train.shape, 'train samples')
+    print(x_test.shape, 'test samples')
+
+    batch_size=128
+    epochs=50
+
+    y_ = [item[0] for item in y_train]
+    y_ = np.array(y_)
+
+    #X_ = preprocessing(x_train)
+    X_ = x_train
+    # init the variables
+    accuracies,precisions,recalls, f1s=[],[],[],[]
+    
+    skf = StratifiedKFold(n_splits=10, shuffle=True)
+    number = 0
+    start = time.time()
+    for train_index, val_index in skf.split(X_, y_):
+
+        X_train, X_test = X_[train_index], X_[val_index]
+        y_train_, y_test_ = y_[train_index], y_[val_index]
+        y_train_ = to_categorical(y_train_, num_classes)
+        y_test_ = to_categorical(y_test_, num_classes)
+
+        
+        model = create_model_task_4(num_classes,input_shape)
+        model.compile(loss='categorical_crossentropy',
+                  optimizer=Adam(lr=0.0001),
+                  metrics=['accuracy'])
+
+        history = model.fit(X_train, y_train_,
+                    batch_size=batch_size,
+                    epochs=epochs,
+                    verbose=1,
+                    validation_data=(X_test, y_test_))
+        score = model.evaluate(X_test, y_test_, verbose=0)
+
+
+        print('Test loss:', score[0])
+        print('Test accuracy:', score[1])
+
+        number += 1
+
+
+
+    print("it took", time.time() - start, "seconds.")
 
 if __name__ == '__main__':
     # firt_task()
