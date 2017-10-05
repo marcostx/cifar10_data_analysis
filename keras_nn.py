@@ -28,13 +28,35 @@ from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import StandardScaler
 from keras.datasets import cifar10
 from sklearn.model_selection import cross_val_score
-from util import *
+
 from keras.models import Sequential
 from keras.layers import Dense, Dropout
 from keras.optimizers import Adam   
 import time
 from keras.utils import to_categorical
 from random import shuffle
+from keras.preprocessing.image import ImageDataGenerator
+
+
+def preproc(x_train,x_test):
+    x_train = x_train.astype('float32')
+    x_test = x_test.astype('float32')
+    x_train /= 255
+    x_test /= 255
+    datagen = ImageDataGenerator(
+        featurewise_center=True,
+        featurewise_std_normalization=True,
+        rotation_range=20,
+        width_shift_range=0.2,
+        height_shift_range=0.2,
+        horizontal_flip=True)
+
+    datagen.fit(x_train)
+
+    x_train = x_train.reshape((-1,32 * 32 * 3))
+    x_test = x_test.reshape((-1,32 * 32 * 3))
+
+    return x_train,x_test
 
 def create_model_task_3(num_classes,input_shape):
     model = Sequential()
@@ -49,9 +71,7 @@ def create_model_task_3(num_classes,input_shape):
 def create_model_task_4(num_classes,input_shape):
     model = Sequential()
     model.add(Dense(512, activation='relu', input_shape=(input_shape,)))
-    model.add(Dropout(0.2))
     model.add(Dense(512, activation='relu'))
-    model.add(Dropout(0.2))
     model.add(Dense(num_classes, activation='softmax'))
 
     model.summary()
@@ -76,6 +96,8 @@ num_classes=10
 channels=3
 img_size=32
 input_shape=img_size*img_size*channels
+batch_size=128
+epochs=70
 
 def third_task(x_train, x_test, y_train, y_test):
     """
@@ -90,8 +112,7 @@ def third_task(x_train, x_test, y_train, y_test):
     print(x_train.shape, 'train samples')
     print(x_test.shape, 'test samples')
 
-    batch_size=128
-    epochs=50
+    
 
     #X_ = np.concatenate((x_train, x_test))
     #y_ = np.concatenate((y_train, y_test))
@@ -102,7 +123,7 @@ def third_task(x_train, x_test, y_train, y_test):
     #X_ = preprocessing(x_train)
     X_ = x_train
     # init the variables
-    accuracies,precisions,recalls, f1s=[],[],[],[]
+    accuracies=[]
     
     skf = StratifiedKFold(n_splits=10, shuffle=True)
     number = 0
@@ -130,9 +151,11 @@ def third_task(x_train, x_test, y_train, y_test):
 
         print('Test loss:', score[0])
         print('Test accuracy:', score[1])
+        accuracies.append(score[1])
 
         number += 1
 
+    print("avg accuracy cv=10 : ", np.mean(accuracies))
     print("it took", time.time() - start, "seconds.")
 
 def fourth_task(x_train, x_test, y_train, y_test):
@@ -145,13 +168,10 @@ def fourth_task(x_train, x_test, y_train, y_test):
 
     """
 
-
     print('x_train shape:', x_train.shape)
     print(x_train.shape, 'train samples')
     print(x_test.shape, 'test samples')
 
-    batch_size=128
-    epochs=50
 
     y_ = [item[0] for item in y_train]
     y_ = np.array(y_)
@@ -159,7 +179,7 @@ def fourth_task(x_train, x_test, y_train, y_test):
     #X_ = preprocessing(x_train)
     X_ = x_train
     # init the variables
-    accuracies,precisions,recalls, f1s=[],[],[],[]
+    accuracies=[]
     
     skf = StratifiedKFold(n_splits=10, shuffle=True)
     number = 0
@@ -187,24 +207,19 @@ def fourth_task(x_train, x_test, y_train, y_test):
 
         print('Test loss:', score[0])
         print('Test accuracy:', score[1])
+        accuracies.append(score[1])
 
         number += 1
 
 
-
+    print("avg accuracy cv=10 : ", np.mean(accuracies))
     print("it took", time.time() - start, "seconds.")
 
 if __name__ == '__main__':
     # firt_task()
     # loading splitted dataset
     (x_train, y_train), (x_test, y_test) = cifar10.load_data()
-    x_train = x_train.astype('float32')
-    x_test = x_test.astype('float32')
-    x_train /= 255
-    x_test /= 255
-
-    x_train = x_train.reshape((-1,32 * 32 * 3))
-    x_test = x_test.reshape((-1,32 * 32 * 3))
+    x_train,x_test = preproc(x_train,x_test)
 
 
-    third_task(x_train, x_test, y_train, y_test)
+    fourth_task(x_train, x_test, y_train, y_test)
