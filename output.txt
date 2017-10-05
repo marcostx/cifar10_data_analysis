@@ -71,3 +71,8 @@ Done.
 # resultado keras 1 camada
 ('avg accuracy cv=10 : ', 0.53335999999999995)
 ('it took', 18921.521733045578, 'seconds.')
+('it took', 5,25597825916667, 'hours.')
+
+# resultado keras 2 camadas
+('avg accuracy cv=10 : ', 0.54231999999999991)
+('it took', 9412.678081035614, 'seconds.')
