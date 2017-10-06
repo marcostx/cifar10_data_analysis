@@ -39,6 +39,8 @@ from keras.layers.advanced_activations import LeakyReLU
 from keras.preprocessing.image import ImageDataGenerator
 
 
+
+
 num_classes=10
 channels=3
 img_size=32
