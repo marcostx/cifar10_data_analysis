@@ -100,7 +100,7 @@ def preprocessing(X):
     return X_prec
 
 
-def train(x_train, x_test, y_train, y_test, num_classes, batch_size, epochs, learning_rate, model_function, activation, drop_out):
+def train(x_train, x_test, y_train, y_test, num_classes, input_shape, batch_size, epochs, learning_rate, model_function, activation, drop_out):
     print('x_train shape:', x_train.shape)
     print(x_train.shape, 'train samples')
     print(x_test.shape, 'test samples')
@@ -171,7 +171,7 @@ def main(argv):
     x_train,x_test = preproc(x_train,x_test)
 
 
-    train(x_train, x_test, y_train, y_test, num_classes, batch_size, epochs, learning_rate, dispatcher[model], activation, drop_out)
+    train(x_train, x_test, y_train, y_test, num_classes, input_shape, batch_size, epochs, learning_rate, dispatcher[model], activation, drop_out)
 
 
 
