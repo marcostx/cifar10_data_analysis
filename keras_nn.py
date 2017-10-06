@@ -35,6 +35,7 @@ from keras.optimizers import Adam
 import time
 from keras.utils import to_categorical
 from random import shuffle
+from keras.layers.advanced_activations import LeakyReLU
 from keras.preprocessing.image import ImageDataGenerator
 
 
@@ -43,7 +44,7 @@ channels=3
 img_size=32
 input_shape=img_size*img_size*channels
 batch_size=128
-epochs=70
+epochs=40
 
 
 def preproc(x_train,x_test):
@@ -84,9 +85,11 @@ def create_model_task_3(num_classes,input_shape):
 
 def create_model_task_4(num_classes,input_shape):
     model = Sequential()
-    model.add(Dense(512, activation='relu', input_shape=(input_shape,)))
+    model.add(Dense(512, activation='linear', input_shape=(input_shape,)))
+    model.add(LeakyReLU(alpha=.001))
     model.add(Dropout(0.2))
-    model.add(Dense(512, activation='relu'))
+    model.add(Dense(512, activation='linear'))
+    model.add(LeakyReLU(alpha=.001))
     model.add(Dropout(0.2))
     model.add(Dense(num_classes, activation='softmax'))
 
