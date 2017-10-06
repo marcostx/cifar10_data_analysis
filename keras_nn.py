@@ -28,6 +28,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import StandardScaler
 from keras.datasets import cifar10
 from sklearn.model_selection import cross_val_score
+from keras.layers.normalization import BatchNormalization
 
 from keras.models import Sequential
 from keras.layers import Dense, Dropout
@@ -43,6 +44,12 @@ def preproc(x_train,x_test):
     x_test = x_test.astype('float32')
     x_train /= 255
     x_test /= 255
+
+    mean = np.mean(x_train,axis=(0,1,2,3))
+    std = np.std(x_train,axis=(0,1,2,3))
+    x_train = (x_train-mean)/(std+1e-7)
+    x_test = (x_test-mean)/(std+1e-7)
+
     datagen = ImageDataGenerator(
         featurewise_center=True,
         featurewise_std_normalization=True,
