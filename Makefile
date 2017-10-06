@@ -44,24 +44,29 @@ HOST_TENSORBOARD_PORT=26006
 #HOST CPU VARS
 HOST_CPU_SOURCE_PATH=$(shell pwd)
 HOST_CPU_METADATA_PATH=$(shell pwd)/metadata
+HOST_CPU_DATASET_PATH=$(HOME)/.keras
 
 #HOST GPU PATHS
 HOST_GPU_SOURCE_PATH=$(shell pwd)
 HOST_GPU_METADATA_PATH=$(shell pwd)/metadata
+HOST_GPU_DATASET_PATH=$(HOME)/.keras
 
 #IMAGE VARS
 IMAGE_SOURCE_PATH=/home/src
 IMAGE_METADATA_PATH=/home/metadata
+IMAGE_DATASET_PATH=$(~$USER)/.keras
 
 
 # VOLUMES
 
 CPU_DOCKER_VOLUMES = --volume=$(HOST_CPU_SOURCE_PATH):$(IMAGE_SOURCE_PATH) \
 				     --volume=$(HOST_CPU_METADATA_PATH):$(IMAGE_METADATA_PATH) \
+				     --volume=$(HOST_CPU_DATASET_PATH):$(IMAGE_DATASET_PATH) \
 				     --workdir=$(IMAGE_SOURCE_PATH)
 
 GPU_DOCKER_VOLUMES = --volume=$(HOST_GPU_SOURCE_PATH):$(IMAGE_SOURCE_PATH) \
 				     --volume=$(HOST_GPU_METADATA_PATH):$(IMAGE_METADATA_PATH) \
+				     --volume=$(HOST_GPU_DATASET_PATH):$(IMAGE_DATASET_PATH) \
 				     --workdir=$(IMAGE_SOURCE_PATH)
 
 
@@ -87,6 +92,7 @@ EXPORT_COMMAND=export
 
 #FILES
 TRAIN_FILE=keras_nn.py
+TEST_FILE=keras_nn_test.py
 
 
 ##############################################################################
@@ -100,6 +106,11 @@ train t:
 	@$(EXPORT_COMMAND) CUDA_VISIBLE_DEVICES=$(CUDA_VISIBLE_DEVICES)
 	@$(PYTHON_COMMAND) $(TRAIN_FILE)
 
+test te:
+	@echo "[Train] Test model"
+	@echo "\t Using CUDA_VISIBLE_DEVICES: "$(CUDA_VISIBLE_DEVICES)
+	@$(EXPORT_COMMAND) CUDA_VISIBLE_DEVICES=$(CUDA_VISIBLE_DEVICES)
+	@$(PYTHON_COMMAND) $(TEST_FILE)
 
 
 ##############################################################################
@@ -110,7 +121,11 @@ run rc: docker-print
 	@$(DOCKER_RUN_COMMAND) bash -c "make train CUDA_VISIBLE_DEVICES=$(CUDA_VISIBLE_DEVICES)"; \
 	status=$$
 
-run-test rtm: docker-print
+run-test rt: docker-print
+	@$(DOCKER_RUN_COMMAND) bash -c "make test CUDA_VISIBLE_DEVICES=$(CUDA_VISIBLE_DEVICES)"; \
+	status=$$
+
+run-docker rtm: docker-print
 	@$(DOCKER_RUN_COMMAND)
 
 

@@ -36,7 +36,7 @@ from keras.utils import to_categorical
 from random import shuffle
 from keras.preprocessing.image import ImageDataGenerator
 
-
+from sklearn.metrics import confusion_matrix
 
 
 num_classes=10
@@ -44,7 +44,8 @@ channels=3
 img_size=32
 input_shape=img_size*img_size*channels
 batch_size=128
-epochs=70
+epochs=1
+learning_rate=0.0001
 
 
 def preproc(x_train,x_test):
@@ -104,122 +105,45 @@ def preprocessing(X):
     return X_prec
 
 
-
-def third_task(x_train, x_test, y_train, y_test):
-    """
-
-		Move on to Neural Networks, using one hidden layer. You should
-		numerically check your gradient calculations.
-
-	"""
-
-
+def task(x_train, x_test, y_train, y_test, model_task):
     print('x_train shape:', x_train.shape)
     print(x_train.shape, 'train samples')
     print(x_test.shape, 'test samples')
 
+    y_train = [item[0] for item in y_train]
+    y_train = np.array(y_train)
+    y_train = to_categorical(y_train, num_classes)
 
+    y_test = [item[0] for item in y_test]
+    y_test = np.array(y_test)
+    y_test = to_categorical(y_test, num_classes)
 
-    #X_ = np.concatenate((x_train, x_test))
-    #y_ = np.concatenate((y_train, y_test))
-    y_ = [item[0] for item in y_train]
-    y_ = np.array(y_)
+    model = model_task(num_classes,input_shape)
 
-
-    #X_ = preprocessing(x_train)
-    X_ = x_train
-    # init the variables
-    accuracies=[]
-
-    skf = StratifiedKFold(n_splits=10, shuffle=True)
-    number = 0
-    start = time.time()
-    for train_index, val_index in skf.split(X_, y_):
-
-        X_train, X_test = X_[train_index], X_[val_index]
-        y_train_, y_test_ = y_[train_index], y_[val_index]
-        y_train_ = to_categorical(y_train_, num_classes)
-        y_test_ = to_categorical(y_test_, num_classes)
-
-
-        model = create_model_task_3(num_classes,input_shape)
-        model.compile(loss='categorical_crossentropy',
-                  optimizer=Adam(lr=0.0001),
+    model.compile(loss='categorical_crossentropy',
+                  optimizer=Adam(lr=learning_rate),
                   metrics=['accuracy'])
 
-        history = model.fit(X_train, y_train_,
-                    batch_size=batch_size,
-                    epochs=epochs,
-                    verbose=1,
-                    validation_data=(X_test, y_test_))
-        score = model.evaluate(X_test, y_test_, verbose=0)
-
-
-        print('Test loss:', score[0])
-        print('Test accuracy:', score[1])
-        accuracies.append(score[1])
-
-        number += 1
-
-    print("avg accuracy cv=10 : ", np.mean(accuracies))
-    print("it took", time.time() - start, "seconds.")
-
-def fourth_task(x_train, x_test, y_train, y_test):
-    """
-
-        Extend your Neural Network to two hidden layers.
-        Try diferent activation functions. Does the
-        performance improve...
-
-
-    """
-
-    print('x_train shape:', x_train.shape)
-    print(x_train.shape, 'train samples')
-    print(x_test.shape, 'test samples')
-
-
-    y_ = [item[0] for item in y_train]
-    y_ = np.array(y_)
-
-    #X_ = preprocessing(x_train)
-    X_ = x_train
-    # init the variables
-    accuracies=[]
-
-    skf = StratifiedKFold(n_splits=10, shuffle=True)
-    number = 0
     start = time.time()
-    for train_index, val_index in skf.split(X_, y_):
-
-        X_train, X_test = X_[train_index], X_[val_index]
-        y_train_, y_test_ = y_[train_index], y_[val_index]
-        y_train_ = to_categorical(y_train_, num_classes)
-        y_test_ = to_categorical(y_test_, num_classes)
-
-
-        model = create_model_task_4(num_classes,input_shape)
-        model.compile(loss='categorical_crossentropy',
-                  optimizer=Adam(lr=0.0001),
-                  metrics=['accuracy'])
-
-        history = model.fit(X_train, y_train_,
-                    batch_size=batch_size,
-                    epochs=epochs,
-                    verbose=1,
-                    validation_data=(X_test, y_test_))
-        score = model.evaluate(X_test, y_test_, verbose=0)
-
-
-        print('Test loss:', score[0])
-        print('Test accuracy:', score[1])
-        accuracies.append(score[1])
-
-        number += 1
-
-
-    print("avg accuracy cv=10 : ", np.mean(accuracies))
+    history = model.fit(x_train, y_train,
+                        batch_size=batch_size,
+                        epochs=epochs,
+                        verbose=1)
     print("it took", time.time() - start, "seconds.")
+
+    y_predicted = model.predict(x_test, verbose=0)
+
+    y_test_ = np.argmax(y_test, axis=1)
+    y_predicted = np.argmax(y_predicted, axis=1)
+
+    cm = confusion_matrix(y_test_, y_predicted)
+    cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+
+    accuracy = np.mean(np.diag(cm))
+
+    print('confusion matrix:', cm)
+    print('Accuracy of cm:', accuracy)
+
 
 if __name__ == '__main__':
     # firt_task()
@@ -228,4 +152,4 @@ if __name__ == '__main__':
     x_train,x_test = preproc(x_train,x_test)
 
 
-    fourth_task(x_train, x_test, y_train, y_test)
+    task(x_train, x_test, y_train, y_test, create_model_task_4)
