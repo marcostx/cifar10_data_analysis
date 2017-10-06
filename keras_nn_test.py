@@ -38,14 +38,9 @@ from keras.preprocessing.image import ImageDataGenerator
 
 from sklearn.metrics import confusion_matrix
 
-
-num_classes=10
-channels=3
-img_size=32
-input_shape=img_size*img_size*channels
-batch_size=128
-epochs=1
-learning_rate=0.0001
+# Local imports
+import utils.load_config as lc
+import argparse
 
 
 def preproc(x_train,x_test):
@@ -68,22 +63,22 @@ def preproc(x_train,x_test):
 
     return x_train,x_test
 
-def create_model_task_3(num_classes,input_shape):
+def nn_1l(num_classes,input_shape, activation, drop_out):
     model = Sequential()
-    model.add(Dense(512, activation='relu', input_shape=(input_shape,)))
-
+    model.add(Dense(512, activation=activation, input_shape=(input_shape,)))
+    # model.add(Dropout(drop_out))
     model.add(Dense(num_classes, activation='softmax'))
 
     model.summary()
 
     return model
 
-def create_model_task_4(num_classes,input_shape):
+def nn_2l(num_classes,input_shape, activation, drop_out):
     model = Sequential()
-    model.add(Dense(512, activation='relu', input_shape=(input_shape,)))
-    model.add(Dropout(0.2))
-    model.add(Dense(512, activation='relu'))
-    model.add(Dropout(0.2))
+    model.add(Dense(512, activation=activation, input_shape=(input_shape,)))
+    model.add(Dropout(drop_out))
+    model.add(Dense(512, activation=activation))
+    model.add(Dropout(drop_out))
     model.add(Dense(num_classes, activation='softmax'))
 
     model.summary()
@@ -105,7 +100,7 @@ def preprocessing(X):
     return X_prec
 
 
-def task(x_train, x_test, y_train, y_test, model_task):
+def train(x_train, x_test, y_train, y_test, model_function, activation, drop_out):
     print('x_train shape:', x_train.shape)
     print(x_train.shape, 'train samples')
     print(x_test.shape, 'test samples')
@@ -118,7 +113,7 @@ def task(x_train, x_test, y_train, y_test, model_task):
     y_test = np.array(y_test)
     y_test = to_categorical(y_test, num_classes)
 
-    model = model_task(num_classes,input_shape)
+    model = model_function(num_classes, input_shape, activation, drop_out)
 
     model.compile(loss='categorical_crossentropy',
                   optimizer=Adam(lr=learning_rate),
@@ -145,11 +140,41 @@ def task(x_train, x_test, y_train, y_test, model_task):
     print('Accuracy of cm:', accuracy)
 
 
-if __name__ == '__main__':
-    # firt_task()
-    # loading splitted dataset
+dispatcher = {
+    'nn_1l':nn_1l,
+    'nn_2l':nn_2l
+}
+
+def main(argv):
+    # Parse arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-c', '--config_file', help='Config file', required=True)
+    args = parser.parse_args()
+
+    CONFIG = lc.load_configuration(args.config_file)
+
+
+    num_classes   = CONFIG.num_classes
+    channels      = CONFIG.channels
+    img_size      = CONFIG.img_size
+    batch_size    = CONFIG.batch_size
+    epochs        = CONFIG.epochs
+    learning_rate = CONFIG.learning_rate
+    model         = CONFIG.model
+
+    drop_out      = CONFIG.drop_out
+    activation  = CONFIG.activation
+
+    input_shape   = (img_size**2) * channels
+
     (x_train, y_train), (x_test, y_test) = cifar10.load_data()
     x_train,x_test = preproc(x_train,x_test)
 
 
-    task(x_train, x_test, y_train, y_test, create_model_task_4)
+    train(x_train, x_test, y_train, y_test, dispatcher[model], activation, drop_out)
+
+
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

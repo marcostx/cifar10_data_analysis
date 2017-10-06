@@ -14,6 +14,8 @@ GPU_DOCKER_IMAGE=tensorflow-opencv-gpu-py3
 ##############################################################################
 # enable/disable GPU usage
 GPU=false
+# Config file used to experiment
+CONFIG_FILE=""
 # List of cuda devises
 CUDA_VISIBLE_DEVICES=0
 # Name of dataset to process
@@ -104,13 +106,13 @@ train t:
 	@echo "[Train] Trainning model"
 	@echo "\t Using CUDA_VISIBLE_DEVICES: "$(CUDA_VISIBLE_DEVICES)
 	@$(EXPORT_COMMAND) CUDA_VISIBLE_DEVICES=$(CUDA_VISIBLE_DEVICES)
-	@$(PYTHON_COMMAND) $(TRAIN_FILE)
+	@$(PYTHON_COMMAND) $(TRAIN_FILE) -c $(CONFIG_FILE)
 
 test te:
 	@echo "[Train] Test model"
 	@echo "\t Using CUDA_VISIBLE_DEVICES: "$(CUDA_VISIBLE_DEVICES)
 	@$(EXPORT_COMMAND) CUDA_VISIBLE_DEVICES=$(CUDA_VISIBLE_DEVICES)
-	@$(PYTHON_COMMAND) $(TEST_FILE)
+	@$(PYTHON_COMMAND) $(TEST_FILE) -c $(CONFIG_FILE)
 
 
 ##############################################################################
@@ -118,11 +120,11 @@ test te:
 ##############################################################################
 
 run rc: docker-print
-	@$(DOCKER_RUN_COMMAND) bash -c "make train CUDA_VISIBLE_DEVICES=$(CUDA_VISIBLE_DEVICES)"; \
+	@$(DOCKER_RUN_COMMAND) bash -c "make train CUDA_VISIBLE_DEVICES=$(CUDA_VISIBLE_DEVICES)  CONFIG_FILE=$(CONFIG_FILE)"; \
 	status=$$
 
 run-test rt: docker-print
-	@$(DOCKER_RUN_COMMAND) bash -c "make test CUDA_VISIBLE_DEVICES=$(CUDA_VISIBLE_DEVICES)"; \
+	@$(DOCKER_RUN_COMMAND) bash -c "make test CUDA_VISIBLE_DEVICES=$(CUDA_VISIBLE_DEVICES)  CONFIG_FILE=$(CONFIG_FILE)"; \
 	status=$$
 
 run-docker rtm: docker-print
