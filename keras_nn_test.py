@@ -100,7 +100,12 @@ def preprocessing(X):
     return X_prec
 
 
-def train(x_train, x_test, y_train, y_test, num_classes, input_shape, batch_size, epochs, learning_rate, model_function, activation, drop_out):
+def train(dataset, num_classes, input_shape, batch_size, epochs, learning_rate, model_function, activation, drop_out):
+    x_train = dataset[0]
+    x_test = dataset[1]
+    y_train = dataset[2]
+    y_test = dataset[3]
+
     print('x_train shape:', x_train.shape)
     print(x_train.shape, 'train samples')
     print(x_test.shape, 'test samples')
@@ -170,8 +175,10 @@ def main(argv):
     (x_train, y_train), (x_test, y_test) = cifar10.load_data()
     x_train,x_test = preproc(x_train,x_test)
 
+    dataset = [x_train, y_train, x_test, y_test]
 
-    train(x_train, x_test, y_train, y_test, num_classes, input_shape, batch_size, epochs, learning_rate, dispatcher[model], activation, drop_out)
+
+    train(dataset, num_classes, input_shape, batch_size, epochs, learning_rate, dispatcher[model], activation, drop_out)
 
 
 
