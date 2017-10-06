@@ -76,4 +76,8 @@ Done.
 # resultado keras 2 camadas
 ('avg accuracy cv=10 : ', 0.54231999999999991)
 ('it took', 9412.678081035614, 'seconds.')
+
+# resultado com 2 camadas e dropout
+('avg accuracy cv=10 : ', 0.56209999999999993)
+('it took', 9856.508015871048, 'seconds.')
 	

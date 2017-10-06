@@ -71,7 +71,9 @@ def create_model_task_3(num_classes,input_shape):
 def create_model_task_4(num_classes,input_shape):
     model = Sequential()
     model.add(Dense(512, activation='relu', input_shape=(input_shape,)))
+    model.add(Dropout(0.2))
     model.add(Dense(512, activation='relu'))
+    model.add(Dropout(0.2))
     model.add(Dense(num_classes, activation='softmax'))
 
     model.summary()
@@ -222,4 +224,4 @@ if __name__ == '__main__':
     x_train,x_test = preproc(x_train,x_test)
 
 
-    third_task(x_train, x_test, y_train, y_test)
+    fourth_task(x_train, x_test, y_train, y_test)
