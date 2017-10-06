@@ -17,7 +17,6 @@
 
 import os
 import sys
-import matplotlib.pyplot as plt
 import numpy as np
 import cv2
 import tensorflow as tf
@@ -32,11 +31,19 @@ from keras.layers.normalization import BatchNormalization
 
 from keras.models import Sequential
 from keras.layers import Dense, Dropout
-from keras.optimizers import Adam   
+from keras.optimizers import Adam
 import time
 from keras.utils import to_categorical
 from random import shuffle
 from keras.preprocessing.image import ImageDataGenerator
+
+
+num_classes=10
+channels=3
+img_size=32
+input_shape=img_size*img_size*channels
+batch_size=128
+epochs=70
 
 
 def preproc(x_train,x_test):
@@ -68,7 +75,7 @@ def preproc(x_train,x_test):
 def create_model_task_3(num_classes,input_shape):
     model = Sequential()
     model.add(Dense(512, activation='relu', input_shape=(input_shape,)))
-    
+
     model.add(Dense(num_classes, activation='softmax'))
 
     model.summary()
@@ -96,22 +103,17 @@ def preprocessing(X):
         X_prec.append(gray_image)
 
     X_prec = np.array(X_prec)
-    
+
     X_prec = X_prec.reshape((-1, 32 * 32))
 
     return X_prec
 
-num_classes=10
-channels=3
-img_size=32
-input_shape=img_size*img_size*channels
-batch_size=128
-epochs=70
+
 
 def third_task(x_train, x_test, y_train, y_test):
     """
-		
-		Move on to Neural Networks, using one hidden layer. You should 
+
+		Move on to Neural Networks, using one hidden layer. You should
 		numerically check your gradient calculations.
 
 	"""
@@ -121,7 +123,7 @@ def third_task(x_train, x_test, y_train, y_test):
     print(x_train.shape, 'train samples')
     print(x_test.shape, 'test samples')
 
-    
+
 
     #X_ = np.concatenate((x_train, x_test))
     #y_ = np.concatenate((y_train, y_test))
@@ -133,7 +135,7 @@ def third_task(x_train, x_test, y_train, y_test):
     X_ = x_train
     # init the variables
     accuracies=[]
-    
+
     skf = StratifiedKFold(n_splits=10, shuffle=True)
     number = 0
     start = time.time()
@@ -144,7 +146,7 @@ def third_task(x_train, x_test, y_train, y_test):
         y_train_ = to_categorical(y_train_, num_classes)
         y_test_ = to_categorical(y_test_, num_classes)
 
-        
+
         model = create_model_task_3(num_classes,input_shape)
         model.compile(loss='categorical_crossentropy',
                   optimizer=Adam(lr=0.0001),
@@ -169,9 +171,9 @@ def third_task(x_train, x_test, y_train, y_test):
 
 def fourth_task(x_train, x_test, y_train, y_test):
     """
-        
-        Extend your Neural Network to two hidden layers. 
-        Try diferent activation functions. Does the 
+
+        Extend your Neural Network to two hidden layers.
+        Try diferent activation functions. Does the
         performance improve...
 
 
@@ -189,7 +191,7 @@ def fourth_task(x_train, x_test, y_train, y_test):
     X_ = x_train
     # init the variables
     accuracies=[]
-    
+
     skf = StratifiedKFold(n_splits=10, shuffle=True)
     number = 0
     start = time.time()
@@ -200,7 +202,7 @@ def fourth_task(x_train, x_test, y_train, y_test):
         y_train_ = to_categorical(y_train_, num_classes)
         y_test_ = to_categorical(y_test_, num_classes)
 
-        
+
         model = create_model_task_4(num_classes,input_shape)
         model.compile(loss='categorical_crossentropy',
                   optimizer=Adam(lr=0.0001),
