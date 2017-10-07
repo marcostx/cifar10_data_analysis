@@ -14,6 +14,8 @@ GPU_DOCKER_IMAGE=tensorflow-opencv-gpu-py3
 ##############################################################################
 # enable/disable GPU usage
 GPU=false
+# Config file used to experiment
+CONFIG_FILE=""
 # List of cuda devises
 CUDA_VISIBLE_DEVICES=0
 # Name of dataset to process
@@ -54,7 +56,7 @@ HOST_GPU_DATASET_PATH=$(HOME)/.keras
 #IMAGE VARS
 IMAGE_SOURCE_PATH=/home/src
 IMAGE_METADATA_PATH=/home/metadata
-IMAGE_DATASET_PATH=$(~$USER)/.keras
+IMAGE_DATASET_PATH=/root/.keras
 
 
 # VOLUMES
@@ -91,8 +93,8 @@ PYTHON_COMMAND=python3
 EXPORT_COMMAND=export
 
 #FILES
-TRAIN_FILE=keras_nn.py
-TEST_FILE=keras_nn_test.py
+TRAIN_FILE=train_pipeline.py
+TEST_FILE=test_pipeline.py
 
 
 ##############################################################################
@@ -104,29 +106,29 @@ train t:
 	@echo "[Train] Trainning model"
 	@echo "\t Using CUDA_VISIBLE_DEVICES: "$(CUDA_VISIBLE_DEVICES)
 	@$(EXPORT_COMMAND) CUDA_VISIBLE_DEVICES=$(CUDA_VISIBLE_DEVICES)
-	@$(PYTHON_COMMAND) $(TRAIN_FILE)
+	@$(PYTHON_COMMAND) $(TRAIN_FILE) -c $(CONFIG_FILE)
 
 test te:
 	@echo "[Train] Test model"
 	@echo "\t Using CUDA_VISIBLE_DEVICES: "$(CUDA_VISIBLE_DEVICES)
 	@$(EXPORT_COMMAND) CUDA_VISIBLE_DEVICES=$(CUDA_VISIBLE_DEVICES)
-	@$(PYTHON_COMMAND) $(TEST_FILE)
+	@$(PYTHON_COMMAND) $(TEST_FILE) -c $(CONFIG_FILE)
 
 
 ##############################################################################
 ########################### DOCKER COMMANDS ##################################
 ##############################################################################
 
-run rc: docker-print
-	@$(DOCKER_RUN_COMMAND) bash -c "make train CUDA_VISIBLE_DEVICES=$(CUDA_VISIBLE_DEVICES)"; \
+run-train rc: docker-print
+	@$(DOCKER_RUN_COMMAND) bash -c "make train CUDA_VISIBLE_DEVICES=$(CUDA_VISIBLE_DEVICES)  CONFIG_FILE=$(CONFIG_FILE)"; \
 	status=$$
 
 run-test rt: docker-print
-	@$(DOCKER_RUN_COMMAND) bash -c "make test CUDA_VISIBLE_DEVICES=$(CUDA_VISIBLE_DEVICES)"; \
+	@$(DOCKER_RUN_COMMAND) bash -c "make test CUDA_VISIBLE_DEVICES=$(CUDA_VISIBLE_DEVICES)  CONFIG_FILE=$(CONFIG_FILE)"; \
 	status=$$
 
 run-docker rtm: docker-print
-	@$(DOCKER_RUN_COMMAND)
+	$(DOCKER_RUN_COMMAND)
 
 
 
