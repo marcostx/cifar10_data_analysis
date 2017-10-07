@@ -13,7 +13,7 @@ dispatcher = {
 }
 
 
-def train(x_train, y_train, network_params, model_params):
+def train(x_train, y_train, network_params, model_params, datagen):
 
     model = dispatcher[network_params.model](model_params)
 
@@ -22,10 +22,18 @@ def train(x_train, y_train, network_params, model_params):
                   metrics=['accuracy'])
 
     # start = time.time()
-    history = model.fit(x_train, y_train,
-                        batch_size=network_params.batch_size,
-                        epochs=network_params.epochs,
-                        verbose=network_params.verbose)
+
+    if datagen != None:
+        history = model.fit_generator(datagen.flow(x_train, y_train, batch_size=network_params.batch_size),
+                            steps_per_epoch=x_train.shape[0]//network_params.batch_size,
+                            epochs=network_params.epochs,
+                            verbose=network_params.verbose)
+    else:
+        history = model.fit(x_train, y_train,
+                            batch_size=network_params.batch_size,
+                            epochs=network_params.epochs,
+                            verbose=network_params.verbose)
+    print(history)
     # print("it took", time.time() - start, "seconds.")
 
     return model

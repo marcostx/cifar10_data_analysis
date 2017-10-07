@@ -41,7 +41,7 @@ def train_pipeline(preprocessing_params, model_params, network_params):
     (x_train, y_train), (x_test, y_test) = cifar10.load_data()
 
     # Preprocessing dataset
-    x_train, x_test, y_train, y_test = pp.preprocessing_pipeline(x_train, x_test, y_train, y_test, model_params.num_classes, preprocessing_params)
+    x_train, x_test, y_train, y_test, datagen = pp.preprocessing_pipeline(x_train, x_test, y_train, y_test, model_params.num_classes, preprocessing_params)
 
     # Split dataset
     y_train_ = np.argmax(y_train, axis=1)
@@ -55,7 +55,7 @@ def train_pipeline(preprocessing_params, model_params, network_params):
         kf_x_test, kf_y_test   = x_train[val_index], y_train[val_index]
 
         # Train model
-        model = tm.train(kf_x_train, kf_y_train, network_params, model_params)
+        model = tm.train(kf_x_train, kf_y_train, network_params, model_params, datagen)
 
         score = model.evaluate(kf_x_test, kf_y_test, verbose=0)
 

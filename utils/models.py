@@ -3,13 +3,13 @@ from __future__ import print_function
 
 
 from keras.models import Sequential
-from keras.layers import Dense, Dropout
+from keras.layers import Dense, Dropout, Flatten
 
 
 def nn_1l(model_params):
     model = Sequential()
-    model.add(Dense(512, activation=model_params.activation,
-                         input_shape=(model_params.input_shape,)))
+    model.add(Flatten(input_shape=(32,32,3)))
+    model.add(Dense(512, activation=model_params.activation))
     # model.add(Dropout(drop_out))
     model.add(Dense(model_params.num_classes, activation='softmax'))
 
@@ -19,8 +19,8 @@ def nn_1l(model_params):
 
 def nn_2l(model_params):
     model = Sequential()
-    model.add(Dense(512, activation=model_params.activation,
-                         input_shape=(model_params.input_shape,)))
+    model.add(Flatten(input_shape=(32,32,3)))
+    model.add(Dense(512, activation=model_params.activation))
     model.add(Dropout(model_params.drop_out))
 
     model.add(Dense(512, activation=model_params.activation))
