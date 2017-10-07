@@ -102,8 +102,8 @@ def preprocessing(X):
 
 def train(dataset, num_classes, input_shape, batch_size, epochs, learning_rate, model_function, activation, drop_out):
     x_train = dataset[0]
-    x_test = dataset[1]
-    y_train = dataset[2]
+    y_train = dataset[1]
+    x_test = dataset[2]
     y_test = dataset[3]
 
     print('x_train shape:', x_train.shape)
@@ -159,16 +159,16 @@ def main(argv):
     CONFIG = lc.load_configuration(args.config_file)
 
 
-    num_classes   = CONFIG.num_classes
-    channels      = CONFIG.channels
-    img_size      = CONFIG.img_size
-    batch_size    = CONFIG.batch_size
-    epochs        = CONFIG.epochs
-    learning_rate = CONFIG.learning_rate
+    num_classes   = int(CONFIG.num_classes)
+    channels      = int(CONFIG.channels)
+    img_size      = int(CONFIG.img_size)
+    batch_size    = int(CONFIG.batch_size)
+    epochs        = int(CONFIG.epochs)
+    learning_rate = float(CONFIG.learning_rate)
     model         = CONFIG.model
 
-    drop_out      = CONFIG.drop_out
-    activation  = CONFIG.activation
+    drop_out      = float(CONFIG.drop_out)
+    activation    = CONFIG.activation
 
     input_shape   = (img_size**2) * channels
 

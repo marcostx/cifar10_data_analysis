@@ -56,7 +56,7 @@ HOST_GPU_DATASET_PATH=$(HOME)/.keras
 #IMAGE VARS
 IMAGE_SOURCE_PATH=/home/src
 IMAGE_METADATA_PATH=/home/metadata
-IMAGE_DATASET_PATH=$(~$USER)/.keras
+IMAGE_DATASET_PATH=/root/.keras
 
 
 # VOLUMES
@@ -128,7 +128,7 @@ run-test rt: docker-print
 	status=$$
 
 run-docker rtm: docker-print
-	@$(DOCKER_RUN_COMMAND)
+	$(DOCKER_RUN_COMMAND)
 
 
 
