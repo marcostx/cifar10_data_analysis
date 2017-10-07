@@ -55,7 +55,11 @@ def train_pipeline(preprocessing_params, model_params, network_params):
         kf_x_test, kf_y_test   = x_train[val_index], y_train[val_index]
 
         # Train model
-        model = tm.train(kf_x_train, kf_y_train, network_params, model_params, datagen)
+        if preprocessing_params.data_augmentation == True:
+            model = tm.train_with_augmentation_and_validation(kf_x_train, kf_y_train, network_params, model_params, datagen, kf_x_test, kf_y_test)
+        else:
+            model = tm.train_with_validation(kf_x_train, kf_y_train, network_params, model_params, kf_x_test, kf_y_test)
+
 
         score = model.evaluate(kf_x_test, kf_y_test, verbose=0)
 

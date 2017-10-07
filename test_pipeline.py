@@ -40,10 +40,14 @@ def test_pipeline(preprocessing_params, model_params, network_params):
     (x_train, y_train), (x_test, y_test) = cifar10.load_data()
 
     # Preprocessing dataset
-    x_train, x_test, y_train, y_test = pp.preprocessing_pipeline(x_train, x_test, y_train, y_test, model_params.num_classes, preprocessing_params)
+    x_train, x_test, y_train, y_test, datagen = pp.preprocessing_pipeline(x_train, x_test, y_train, y_test, model_params.num_classes, preprocessing_params)
 
     # Train model
-    model = tm.train(x_train, y_train, network_params, model_params)
+    if preprocessing_params.data_augmentation == True:
+        model = tm.train_with_augmentation(x_train, y_train, network_params, model_params, datagen)
+    else:
+        model = tm.train(x_train, y_train, network_params, model_params)
+
 
     # Test model
     y_predicted = model.predict(x_test, verbose=0)
