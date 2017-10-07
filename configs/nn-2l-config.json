@@ -8,6 +8,7 @@
         "activation": "relu"
     },
     "network_params":{
+        "gpu_fraction": 0.3,
         "model":"nn_2l",
         "loss":"categorical_crossentropy",
         "learning_rate":0.0001,

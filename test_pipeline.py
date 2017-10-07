@@ -22,6 +22,7 @@ import numpy as np
 import tensorflow as tf
 
 from keras.datasets import cifar10
+import keras.backend.tensorflow_backend as ktf
 
 from sklearn.metrics import confusion_matrix
 
@@ -29,6 +30,7 @@ from sklearn.metrics import confusion_matrix
 import utils.train_models as tm
 import utils.load_config as lc
 import utils.preprocessing as pp
+import utils.tf_session as tfs
 
 
 
@@ -73,6 +75,9 @@ def main(argv):
     model_params = CONFIG.model_params
     network_params = CONFIG.network_params
     preprocessing_params = CONFIG.preprocessing_params
+
+    ktf.set_session(tfs.get_session(network_params.gpu_fraction))
+
 
 
     test_pipeline(preprocessing_params, model_params, network_params)

@@ -22,6 +22,8 @@ import numpy as np
 import tensorflow as tf
 
 from keras.datasets import cifar10
+import keras.backend.tensorflow_backend as ktf
+
 
 from sklearn.model_selection import StratifiedKFold
 
@@ -30,6 +32,7 @@ from sklearn.model_selection import StratifiedKFold
 import utils.train_models as tm
 import utils.load_config as lc
 import utils.preprocessing as pp
+import utils.tf_session as tfs
 
 
 def train_pipeline(preprocessing_params, model_params, network_params):
@@ -78,6 +81,7 @@ def main(argv):
     network_params = CONFIG.network_params
     preprocessing_params = CONFIG.preprocessing_params
 
+    ktf.set_session(tfs.get_session(network_params.gpu_fraction))
 
     train_pipeline(preprocessing_params, model_params, network_params)
 
