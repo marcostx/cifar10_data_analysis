@@ -15,218 +15,72 @@
 
 
 
-import os
 import sys
+import argparse
 import numpy as np
-import cv2
+
 import tensorflow as tf
 
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
-from sklearn.model_selection import StratifiedKFold, train_test_split
-from sklearn.metrics import accuracy_score
-from sklearn.preprocessing import StandardScaler
 from keras.datasets import cifar10
-from sklearn.model_selection import cross_val_score
-from keras.layers.normalization import BatchNormalization
 
-from keras.models import Sequential
-from keras.layers import Dense, Dropout
-from keras.optimizers import Adam
-import time
-from keras.utils import to_categorical
-from random import shuffle
-from keras.preprocessing.image import ImageDataGenerator
+from sklearn.model_selection import StratifiedKFold
+
 
 # Local imports
+import utils.train_models as tm
 import utils.load_config as lc
-import argparse
+import utils.preprocessing as pp
 
 
-def preproc(x_train,x_test):
-    x_train = x_train.astype('float32')
-    x_test = x_test.astype('float32')
-    x_train /= 255
-    x_test /= 255
+def train_pipeline(preprocessing_params, model_params, network_params):
 
-    mean = np.mean(x_train,axis=(0,1,2,3))
-    std = np.std(x_train,axis=(0,1,2,3))
-    x_train = (x_train-mean)/(std+1e-7)
-    x_test = (x_test-mean)/(std+1e-7)
-
-    datagen = ImageDataGenerator(
-        featurewise_center=True,
-        featurewise_std_normalization=True,
-        rotation_range=20,
-        width_shift_range=0.2,
-        height_shift_range=0.2,
-        horizontal_flip=True)
-
-    datagen.fit(x_train)
-
-    x_train = x_train.reshape((-1,32 * 32 * 3))
-    x_test = x_test.reshape((-1,32 * 32 * 3))
-
-    return x_train,x_test
-
-def nn_1l(num_classes,input_shape, activation, drop_out):
-    model = Sequential()
-    model.add(Dense(512, activation=activation, input_shape=(input_shape,)))
-    # model.add(Dropout(drop_out))
-    model.add(Dense(num_classes, activation='softmax'))
-
-    model.summary()
-
-    return model
-
-def nn_2l(num_classes,input_shape, activation, drop_out):
-    model = Sequential()
-    model.add(Dense(512, activation=activation, input_shape=(input_shape,)))
-    model.add(Dropout(drop_out))
-    model.add(Dense(512, activation=activation))
-    model.add(Dropout(drop_out))
-    model.add(Dense(num_classes, activation='softmax'))
-
-    model.summary()
-
-    return model
-
-def preprocessing(X):
-    X_prec = []
-
-    for item in X:
-        gray_image = cv2.cvtColor(item, cv2.COLOR_BGR2GRAY)
-
-        X_prec.append(gray_image)
-
-    X_prec = np.array(X_prec)
-
-    X_prec = X_prec.reshape((-1, 32 * 32))
-
-    return X_prec
-
-
-
-def third_task(x_train, x_test, y_train, y_test):
-    """
-
-		Move on to Neural Networks, using one hidden layer. You should
-		numerically check your gradient calculations.
-
-	"""
-
-
-    print('x_train shape:', x_train.shape)
-    print(x_train.shape, 'train samples')
-    print(x_test.shape, 'test samples')
-
-
-
-    #X_ = np.concatenate((x_train, x_test))
-    #y_ = np.concatenate((y_train, y_test))
-    y_ = [item[0] for item in y_train]
-    y_ = np.array(y_)
-
-
-    #X_ = preprocessing(x_train)
-    X_ = x_train
-    # init the variables
-    accuracies=[]
-
-    skf = StratifiedKFold(n_splits=10, shuffle=True)
-    number = 0
-    start = time.time()
-    for train_index, val_index in skf.split(X_, y_):
-
-        X_train, X_test = X_[train_index], X_[val_index]
-        y_train_, y_test_ = y_[train_index], y_[val_index]
-        y_train_ = to_categorical(y_train_, num_classes)
-        y_test_ = to_categorical(y_test_, num_classes)
-
-
-        model = create_model_task_3(num_classes,input_shape)
-        model.compile(loss='categorical_crossentropy',
-                  optimizer=Adam(lr=0.0001),
-                  metrics=['accuracy'])
-
-        history = model.fit(X_train, y_train_,
-                    batch_size=batch_size,
-                    epochs=epochs,
-                    verbose=1,
-                    validation_data=(X_test, y_test_))
-        score = model.evaluate(X_test, y_test_, verbose=0)
-
-
-        print('Test loss:', score[0])
-        print('Test accuracy:', score[1])
-        accuracies.append(score[1])
-
-        number += 1
-
-    print("avg accuracy cv=10 : ", np.mean(accuracies))
-    print("it took", time.time() - start, "seconds.")
-
-def fourth_task(x_train, x_test, y_train, y_test):
-    """
-
-        Extend your Neural Network to two hidden layers.
-        Try diferent activation functions. Does the
-        performance improve...
-
-
-    """
-
-    print('x_train shape:', x_train.shape)
-    print(x_train.shape, 'train samples')
-    print(x_test.shape, 'test samples')
-
-
-    y_ = [item[0] for item in y_train]
-    y_ = np.array(y_)
-
-    #X_ = preprocessing(x_train)
-    X_ = x_train
-    # init the variables
-    accuracies=[]
-
-    skf = StratifiedKFold(n_splits=10, shuffle=True)
-    number = 0
-    start = time.time()
-    for train_index, val_index in skf.split(X_, y_):
-
-        X_train, X_test = X_[train_index], X_[val_index]
-        y_train_, y_test_ = y_[train_index], y_[val_index]
-        y_train_ = to_categorical(y_train_, num_classes)
-        y_test_ = to_categorical(y_test_, num_classes)
-
-
-        model = create_model_task_4(num_classes,input_shape)
-        model.compile(loss='categorical_crossentropy',
-                  optimizer=Adam(lr=0.0001),
-                  metrics=['accuracy'])
-
-        history = model.fit(X_train, y_train_,
-                    batch_size=batch_size,
-                    epochs=epochs,
-                    verbose=1,
-                    validation_data=(X_test, y_test_))
-        score = model.evaluate(X_test, y_test_, verbose=0)
-
-
-        print('Test loss:', score[0])
-        print('Test accuracy:', score[1])
-        accuracies.append(score[1])
-
-        number += 1
-
-
-    print("avg accuracy cv=10 : ", np.mean(accuracies))
-    print("it took", time.time() - start, "seconds.")
-
-if __name__ == '__main__':
-    # firt_task()
-    # loading splitted dataset
+    # Get dataset
     (x_train, y_train), (x_test, y_test) = cifar10.load_data()
-    x_train,x_test = preproc(x_train,x_test)
+
+    # Preprocessing dataset
+    x_train, x_test, y_train, y_test = pp.preprocessing_pipeline(x_train, x_test, y_train, y_test, model_params.num_classes, preprocessing_params)
+
+    # Split dataset
+    y_train_ = np.argmax(y_train, axis=1)
+
+    # init the variables
+    accuracies=[]
+
+    skf = StratifiedKFold(n_splits=network_params.n_kfolds, shuffle=True)
+    for train_index, val_index in skf.split(x_train, y_train_):
+        kf_x_train, kf_y_train = x_train[train_index], y_train[train_index]
+        kf_x_test, kf_y_test   = x_train[val_index], y_train[val_index]
+
+        # Train model
+        model = tm.train(kf_x_train, kf_y_train, network_params, model_params)
+
+        score = model.evaluate(kf_x_test, kf_y_test, verbose=0)
+
+        print('Test loss:', score[0])
+        print('Test accuracy:', score[1])
+        accuracies.append(score[1])
 
 
-    fourth_task(x_train, x_test, y_train, y_test)
+    print("avg accuracy cv=", network_params.n_kfolds, ":", np.mean(accuracies))
+
+    return np.mean(accuracies)
+
+def main(argv):
+    # Parse arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-c', '--config_file', help='Config file', required=True)
+    args = parser.parse_args()
+
+    CONFIG = lc.load_configuration(args.config_file)
+
+    # Get parameters
+    model_params = CONFIG.model_params
+    network_params = CONFIG.network_params
+    preprocessing_params = CONFIG.preprocessing_params
+
+
+    train_pipeline(preprocessing_params, model_params, network_params)
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

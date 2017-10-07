@@ -15,8 +15,6 @@
 
 
 
-import time
-import os
 import sys
 import argparse
 import numpy as np
@@ -35,12 +33,12 @@ import utils.preprocessing as pp
 
 
 
-def test_pipeline(dataset, model_params, network_params):
-    # Split dataset
-    x_train = dataset[0]
-    y_train = dataset[1]
-    x_test = dataset[2]
-    y_test = dataset[3]
+def test_pipeline(preprocessing_params, model_params, network_params):
+    # Get dataset
+    (x_train, y_train), (x_test, y_test) = cifar10.load_data()
+
+    # Preprocessing dataset
+    x_train, x_test, y_train, y_test = pp.preprocessing_pipeline(x_train, x_test, y_train, y_test, model_params.num_classes, preprocessing_params)
 
     # Train model
     model = tm.train(x_train, y_train, network_params, model_params)
@@ -75,16 +73,8 @@ def main(argv):
     network_params = CONFIG.network_params
     preprocessing_params = CONFIG.preprocessing_params
 
-    # Get dataset
-    (x_train, y_train), (x_test, y_test) = cifar10.load_data()
 
-    # Preprocessing dataset
-    x_train, x_test, y_train, y_test = pp.preprocessing_pipeline(x_train, x_test, y_train, y_test, model_params.num_classes, preprocessing_params)
-
-    dataset = [x_train, y_train, x_test, y_test]
-
-
-    test_pipeline(dataset, model_params, network_params)
+    test_pipeline(preprocessing_params, model_params, network_params)
 
 
 

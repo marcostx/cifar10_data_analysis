@@ -25,7 +25,7 @@ def train(x_train, y_train, network_params, model_params):
     history = model.fit(x_train, y_train,
                         batch_size=network_params.batch_size,
                         epochs=network_params.epochs,
-                        verbose=1)
+                        verbose=network_params.verbose)
     # print("it took", time.time() - start, "seconds.")
 
     return model

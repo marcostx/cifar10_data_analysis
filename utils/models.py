@@ -28,6 +28,6 @@ def nn_2l(model_params):
 
     model.add(Dense(model_params.num_classes, activation='softmax'))
 
-    model.summary()
+    # model.summary()
 
     return model
