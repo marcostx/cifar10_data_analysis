@@ -5,7 +5,8 @@
         "channels":3,
         "img_size":32,
         "drop_out": 0.2,
-        "activation": "relu"
+        "activation": "relu",
+        "l1_size":1024
     },
     "network_params":{
         "gpu_fraction": 0.2,
