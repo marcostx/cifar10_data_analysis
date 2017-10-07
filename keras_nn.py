@@ -37,15 +37,9 @@ from keras.utils import to_categorical
 from random import shuffle
 from keras.preprocessing.image import ImageDataGenerator
 
-
-
-
-num_classes=10
-channels=3
-img_size=32
-input_shape=img_size*img_size*channels
-batch_size=128
-epochs=70
+# Local imports
+import utils.load_config as lc
+import argparse
 
 
 def preproc(x_train,x_test):
@@ -74,22 +68,22 @@ def preproc(x_train,x_test):
 
     return x_train,x_test
 
-def create_model_task_3(num_classes,input_shape):
+def nn_1l(num_classes,input_shape, activation, drop_out):
     model = Sequential()
-    model.add(Dense(512, activation='relu', input_shape=(input_shape,)))
-
+    model.add(Dense(512, activation=activation, input_shape=(input_shape,)))
+    # model.add(Dropout(drop_out))
     model.add(Dense(num_classes, activation='softmax'))
 
     model.summary()
 
     return model
 
-def create_model_task_4(num_classes,input_shape):
+def nn_2l(num_classes,input_shape, activation, drop_out):
     model = Sequential()
-    model.add(Dense(512, activation='relu', input_shape=(input_shape,)))
-    model.add(Dropout(0.2))
-    model.add(Dense(512, activation='relu'))
-    model.add(Dropout(0.2))
+    model.add(Dense(512, activation=activation, input_shape=(input_shape,)))
+    model.add(Dropout(drop_out))
+    model.add(Dense(512, activation=activation))
+    model.add(Dropout(drop_out))
     model.add(Dense(num_classes, activation='softmax'))
 
     model.summary()

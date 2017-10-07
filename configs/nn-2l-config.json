@@ -1,11 +1,30 @@
 {
-    "num_classes":10,
-    "channels":3,
-    "img_size":32,
-    "batch_size":128,
-    "epochs":100,
-    "learning_rate":0.0001,
-    "model":"nn_2l",
-    "drop_out": 0.2,
-    "activation": "relu"
+    "model_params":{
+        "input_shape":3072,
+        "num_classes":10,
+        "channels":3,
+        "img_size":32,
+        "drop_out": 0.2,
+        "activation": "relu"
+    },
+    "network_params":{
+        "model":"nn_2l",
+        "loss":"categorical_crossentropy",
+        "learning_rate":0.0001,
+        "batch_size":128,
+        "epochs":1
+    },
+    "preprocessing_params":{
+        "normalization": true,
+        "padronization": true,
+        "data_augmentation": true,
+        "data_augmentation_params":{
+            "featurewise_center": true,
+            "featurewise_std_normalization": true,
+            "rotation_range": 20,
+            "width_shift_range": 0.2,
+            "height_shift_range": 0.2,
+            "horizontal_flip": true
+        }
+    }
 }
