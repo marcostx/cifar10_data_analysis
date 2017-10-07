@@ -93,8 +93,8 @@ PYTHON_COMMAND=python3
 EXPORT_COMMAND=export
 
 #FILES
-TRAIN_FILE=keras_nn.py
-TEST_FILE=keras_nn_test.py
+TRAIN_FILE=train_pipeline.py
+TEST_FILE=test_pipeline.py
 
 
 ##############################################################################
@@ -119,7 +119,7 @@ test te:
 ########################### DOCKER COMMANDS ##################################
 ##############################################################################
 
-run rc: docker-print
+run-train rc: docker-print
 	@$(DOCKER_RUN_COMMAND) bash -c "make train CUDA_VISIBLE_DEVICES=$(CUDA_VISIBLE_DEVICES)  CONFIG_FILE=$(CONFIG_FILE)"; \
 	status=$$
 

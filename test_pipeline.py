@@ -46,6 +46,7 @@ def test_pipeline(preprocessing_params, model_params, network_params):
     # Test model
     y_predicted = model.predict(x_test, verbose=0)
 
+    #TODO make function of confusion matrix and get output file
     # Get comfusion matrix
     y_test_ = np.argmax(y_test, axis=1)
     y_predicted = np.argmax(y_predicted, axis=1)
