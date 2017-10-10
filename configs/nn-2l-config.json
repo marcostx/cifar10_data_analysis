@@ -4,7 +4,7 @@
         "num_classes":10,
         "channels":3,
         "img_size":32,
-        "drop_out": 0.2,
+        "drop_out": 1.0,
         "activation": "relu",
         "l1_size":1024,
         "l2_size":1024
