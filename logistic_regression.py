@@ -27,24 +27,11 @@ from sklearn.preprocessing import StandardScaler
 from keras.datasets import cifar10
 from sklearn.model_selection import cross_val_score
 
+import utils.preprocessing as pp
 
-def img2array(image):
-    vector = []
-    for line in image:
-        for column in line:
-        	vector.append(float(column[0])/255)
 
-    return np.array(vector)
 
-# variables
-
-#batch_size 			= 50
-#num_classes 		= 10
-#epochs 				= 200
-#data_augmentation 	= True
-#num_predictions 	= 20
-
-def firt_task(x_train,x_test,y_train,y_test):
+def first_task(x_train,x_test,y_train,y_test):
 	"""
 
 		Perform Logistic Regression as the baseline (first solution) to learn
@@ -53,8 +40,8 @@ def firt_task(x_train,x_test,y_train,y_test):
 
 	"""
 
-	x_train = StandardScaler().fit_transform(x_train)
-	x_test =  StandardScaler().fit_transform(x_test)
+	#x_train = StandardScaler().fit_transform(x_train)
+	#x_test =  StandardScaler().fit_transform(x_test)
 
 
 	print('x_train shape:', x_train.shape)
@@ -85,7 +72,6 @@ def firt_task(x_train,x_test,y_train,y_test):
 	y = [item[0] for item in y]
 
 	print(cross_val_score(logreg, X, y, cv=10,verbose=True))
-	# test score : 0.390
 
 	# cv results
 	#[Parallel(n_jobs=1)]: Done  10 out of  10 | elapsed:  5.3min finished
@@ -112,8 +98,8 @@ def second_task(x_train,x_test,y_train,y_test):
 
 	"""
 
-	x_train = StandardScaler().fit_transform(x_train)
-	x_test =  StandardScaler().fit_transform(x_test)
+	#x_train = StandardScaler().fit_transform(x_train)
+	#x_test =  StandardScaler().fit_transform(x_test)
 
 
 	print('x_train shape:', x_train.shape)
@@ -144,7 +130,6 @@ def second_task(x_train,x_test,y_train,y_test):
 	y = [item[0] for item in y]
 
 	print(cross_val_score(logreg, X, y, cv=10,verbose=True))
-	# test score : 0.390
 
 	# cv results
 	#[Parallel(n_jobs=1)]: Done   1 out of   1 | elapsed:  1.8min finished
@@ -165,10 +150,21 @@ if __name__ == '__main__':
 	#firt_task()
 	# loading splitted dataset
 	(x_train, y_train), (x_test, y_test) = cifar10.load_data()
-	x_train = x_train.reshape((-1, 32 * 32 * 3))
-	x_test = x_test.reshape((-1, 32 * 32 * 3))
+	#x_train = x_train.reshape((-1, 32 * 32 * 3))
+	#x_test = x_test.reshape((-1, 32 * 32 * 3))
+	x_train = x_train.astype('float32')
+	x_test = x_test.astype('float32')
 
-	second_task(x_train,x_test,y_train,y_test)
+	x_train = pp.normalization(x_train)
+	x_test = pp.normalization(x_test)
+
+	x_train = pp.padronization(x_train)
+	x_test = pp.padronization(x_test)
+
+	x_train = pp.reshape(x_train)
+	x_test = pp.reshape(x_test)
+
+	first_task(x_train,x_test,y_train,y_test)
 
 
 
