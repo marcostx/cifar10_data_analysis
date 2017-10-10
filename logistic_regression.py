@@ -19,7 +19,6 @@ from __future__ import print_function
 
 import os
 import sys
-import matplotlib.pyplot as plt
 import numpy as np
 from sklearn import linear_model
 
@@ -47,9 +46,9 @@ def img2array(image):
 
 def firt_task(x_train,x_test,y_train,y_test):
 	"""
-		
-		Perform Logistic Regression as the baseline (first solution) to learn 
-		the 10 classes in the dataset. Use one-vs-all strategy to build a 
+
+		Perform Logistic Regression as the baseline (first solution) to learn
+		the 10 classes in the dataset. Use one-vs-all strategy to build a
 		classification model.
 
 	"""
@@ -74,7 +73,7 @@ def firt_task(x_train,x_test,y_train,y_test):
 	#print("test score : %.3f " % accuracy_score(y_test,predictions))
 
 	# results
-	# training score : 0.477 
+	# training score : 0.477
 
 	# using cross validation
 	#logreg = linear_model.LogisticRegression(solver='lbfgs', max_iter=100, random_state=42,verbose=1,
@@ -85,8 +84,8 @@ def firt_task(x_train,x_test,y_train,y_test):
 	y = np.concatenate((y_train,y_test))
 	y = [item[0] for item in y]
 
-	print(cross_val_score(logreg, X, y, cv=10,verbose=True))  
-	# test score : 0.390 
+	print(cross_val_score(logreg, X, y, cv=10,verbose=True))
+	# test score : 0.390
 
 	# cv results
 	#[Parallel(n_jobs=1)]: Done  10 out of  10 | elapsed:  5.3min finished
@@ -106,9 +105,9 @@ def firt_task(x_train,x_test,y_train,y_test):
 
 def second_task(x_train,x_test,y_train,y_test):
 	"""
-		
-		Perform Multinomial Logistic Regression (i.e., Softmax regression). 
-		It is a generalization of Logistic Regression to the case where we 
+
+		Perform Multinomial Logistic Regression (i.e., Softmax regression).
+		It is a generalization of Logistic Regression to the case where we
 		want to handle multiple classes
 
 	"""
@@ -133,7 +132,7 @@ def second_task(x_train,x_test,y_train,y_test):
 	#print("test score : %.3f " % accuracy_score(y_test,predictions))
 
 	# results
-	# training score : 0.477 
+	# training score : 0.477
 
 	# using cross validation
 	#logreg = linear_model.LogisticRegression(solver='lbfgs', max_iter=100, random_state=42,verbose=1,
@@ -144,8 +143,8 @@ def second_task(x_train,x_test,y_train,y_test):
 	y = np.concatenate((y_train,y_test))
 	y = [item[0] for item in y]
 
-	print(cross_val_score(logreg, X, y, cv=10,verbose=True))  
-	# test score : 0.390 
+	print(cross_val_score(logreg, X, y, cv=10,verbose=True))
+	# test score : 0.390
 
 	# cv results
 	#[Parallel(n_jobs=1)]: Done   1 out of   1 | elapsed:  1.8min finished
@@ -164,7 +163,7 @@ def second_task(x_train,x_test,y_train,y_test):
 
 if __name__ == '__main__':
 	#firt_task()
-	# loading splitted dataset 
+	# loading splitted dataset
 	(x_train, y_train), (x_test, y_test) = cifar10.load_data()
 	x_train = x_train.reshape((-1, 32 * 32 * 3))
 	x_test = x_test.reshape((-1, 32 * 32 * 3))
