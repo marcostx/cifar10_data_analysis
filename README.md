@@ -6,6 +6,7 @@ Needs Docker
 
 Run Logistic experiments
 `make logistic`TASK=0
+
 Run Softmax experiments
 `make logistic`TASK=1
 
