@@ -21,6 +21,7 @@ CUDA_VISIBLE_DEVICES=0
 # Name of dataset to process
 PROCESS_DATASET=""
 
+TASK=0
 #Path to src folder
 HOST_CPU_SOURCE_PATH = ""
 HOST_GPU_SOURCE_PATH = ""
@@ -89,7 +90,7 @@ endif
 ############################## CODE VARS #####################################
 ##############################################################################
 #COMMANDS
-PYTHON_COMMAND=python3
+PYTHON_COMMAND=python
 EXPORT_COMMAND=export
 
 #FILES
@@ -113,21 +114,17 @@ test te:
 	@echo "[Train] Test model"
 	@echo "\t Using CUDA_VISIBLE_DEVICES: "$(CUDA_VISIBLE_DEVICES)
 	@$(EXPORT_COMMAND) CUDA_VISIBLE_DEVICES=$(CUDA_VISIBLE_DEVICES)
-	@$(PYTHON_COMMAND) $(TEST_FILE) -c $(CONFIG_FILE)
+	@$(PYTHON_COMMAND) $(TEST_FILE) $(CONFIG_FILE)
 
 logistic l:
 	@echo "[Train] Training logistic"
-	@$(PYTHON_COMMAND) $(LOGISTIC_FILE)
-
+	@$(PYTHON_COMMAND) $(LOGISTIC_FILE) $(TASK)
 
 
 ##############################################################################
 ########################### DOCKER COMMANDS ##################################
 ##############################################################################
 
-run-logistic rl: docker-print
-	@$(DOCKER_RUN_COMMAND) bash -c "make logistic"; \
-	status=$$
 
 run-train rc: docker-print
 	@$(DOCKER_RUN_COMMAND) bash -c "make train CUDA_VISIBLE_DEVICES=$(CUDA_VISIBLE_DEVICES)  CONFIG_FILE=$(CONFIG_FILE)"; \

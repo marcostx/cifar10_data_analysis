@@ -145,7 +145,6 @@ def second_task(x_train,x_test,y_train,y_test):
 	#[ 0.399       0.39733333  0.38966667  0.411       0.408       0.40233333 0.39916667  0.40366667  0.40883333  0.39316667]
 
 if __name__ == '__main__':
-	#firt_task()
 	# loading splitted dataset
 	(x_train, y_train), (x_test, y_test) = cifar10.load_data()
 	#x_train = x_train.reshape((-1, 32 * 32 * 3))
@@ -162,7 +161,13 @@ if __name__ == '__main__':
 	x_train = pp.reshape(x_train)
 	x_test = pp.reshape(x_test)
 
-	first_task(x_train,x_test,y_train,y_test)
+	
+	if sys.argv[1] == int(0):
+		print("Running Logistic Regression ...")
+		first_task(x_train,x_test,y_train,y_test)
+	else:
+		print("Running Softmax Regression ...")
+		second_task(x_train,x_test,y_train,y_test)
 
 
 
