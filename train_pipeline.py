@@ -22,6 +22,8 @@ import numpy as np
 import tensorflow as tf
 
 from keras.datasets import cifar10
+import keras.backend.tensorflow_backend as ktf
+
 
 from sklearn.model_selection import StratifiedKFold
 
@@ -30,6 +32,7 @@ from sklearn.model_selection import StratifiedKFold
 import utils.train_models as tm
 import utils.load_config as lc
 import utils.preprocessing as pp
+import utils.tf_session as tfs
 
 
 def train_pipeline(preprocessing_params, model_params, network_params):
@@ -38,7 +41,7 @@ def train_pipeline(preprocessing_params, model_params, network_params):
     (x_train, y_train), (x_test, y_test) = cifar10.load_data()
 
     # Preprocessing dataset
-    x_train, x_test, y_train, y_test = pp.preprocessing_pipeline(x_train, x_test, y_train, y_test, model_params.num_classes, preprocessing_params)
+    x_train, x_test, y_train, y_test, datagen = pp.preprocessing_pipeline(x_train, x_test, y_train, y_test, model_params.num_classes, preprocessing_params)
 
     # Split dataset
     y_train_ = np.argmax(y_train, axis=1)
@@ -52,7 +55,11 @@ def train_pipeline(preprocessing_params, model_params, network_params):
         kf_x_test, kf_y_test   = x_train[val_index], y_train[val_index]
 
         # Train model
-        model = tm.train(kf_x_train, kf_y_train, network_params, model_params)
+        if preprocessing_params.data_augmentation == True:
+            model = tm.train_with_augmentation_and_validation(kf_x_train, kf_y_train, network_params, model_params, datagen, kf_x_test, kf_y_test)
+        else:
+            model = tm.train_with_validation(kf_x_train, kf_y_train, network_params, model_params, kf_x_test, kf_y_test)
+
 
         score = model.evaluate(kf_x_test, kf_y_test, verbose=0)
 
@@ -78,6 +85,7 @@ def main(argv):
     network_params = CONFIG.network_params
     preprocessing_params = CONFIG.preprocessing_params
 
+    ktf.set_session(tfs.get_session(network_params.gpu_fraction))
 
     train_pipeline(preprocessing_params, model_params, network_params)
 

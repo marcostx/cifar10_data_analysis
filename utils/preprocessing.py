@@ -10,7 +10,7 @@ from keras.utils import to_categorical
 
 MAX_PIXEL_VALUE=255
 
-def data_augmentation(data, params):
+def data_augmentation(data_x, params):
     datagen = ImageDataGenerator(
         featurewise_center=True,
         featurewise_std_normalization=True,
@@ -19,7 +19,8 @@ def data_augmentation(data, params):
         height_shift_range=0.2,
         horizontal_flip=True)
 
-    datagen.fit(data)
+    datagen.fit(data_x)
+    return datagen
 
         # featurewise_center=True,
         # featurewise_std_normalization=True,
@@ -59,17 +60,18 @@ def preprocessing_pipeline(x_train, x_test, y_train, y_test, n_labels, params):
         x_train = padronization(x_train)
         x_test = padronization(x_test)
 
+    datagen = None
     if params.data_augmentation == True:
         #print("augmentation")
-        data_augmentation(x_train, params.data_augmentation_params)
+        datagen =  data_augmentation(x_train, params.data_augmentation_params)
         #print(x_train.shape)
 
-    x_train = reshape(x_train)
-    x_test = reshape(x_test)
+    # x_train = reshape(x_train)
+    # x_test = reshape(x_test)
 
     # Preprocesisng labels
     y_train = processing_labels(y_train, n_labels)
     y_test = processing_labels(y_test, n_labels)
 
-    return x_train, x_test, y_train, y_test
+    return x_train, x_test, y_train, y_test, datagen
 

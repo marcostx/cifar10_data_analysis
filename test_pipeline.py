@@ -22,6 +22,7 @@ import numpy as np
 import tensorflow as tf
 
 from keras.datasets import cifar10
+import keras.backend.tensorflow_backend as ktf
 
 from sklearn.metrics import confusion_matrix
 
@@ -29,6 +30,7 @@ from sklearn.metrics import confusion_matrix
 import utils.train_models as tm
 import utils.load_config as lc
 import utils.preprocessing as pp
+import utils.tf_session as tfs
 
 
 
@@ -38,10 +40,14 @@ def test_pipeline(preprocessing_params, model_params, network_params):
     (x_train, y_train), (x_test, y_test) = cifar10.load_data()
 
     # Preprocessing dataset
-    x_train, x_test, y_train, y_test = pp.preprocessing_pipeline(x_train, x_test, y_train, y_test, model_params.num_classes, preprocessing_params)
+    x_train, x_test, y_train, y_test, datagen = pp.preprocessing_pipeline(x_train, x_test, y_train, y_test, model_params.num_classes, preprocessing_params)
 
     # Train model
-    model = tm.train(x_train, y_train, network_params, model_params)
+    if preprocessing_params.data_augmentation == True:
+        model = tm.train_with_augmentation(x_train, y_train, network_params, model_params, datagen)
+    else:
+        model = tm.train(x_train, y_train, network_params, model_params)
+
 
     # Test model
     y_predicted = model.predict(x_test, verbose=0)
@@ -73,6 +79,9 @@ def main(argv):
     model_params = CONFIG.model_params
     network_params = CONFIG.network_params
     preprocessing_params = CONFIG.preprocessing_params
+
+    ktf.set_session(tfs.get_session(network_params.gpu_fraction))
+
 
 
     test_pipeline(preprocessing_params, model_params, network_params)

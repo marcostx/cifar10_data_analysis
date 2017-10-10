@@ -5,14 +5,16 @@
         "channels":3,
         "img_size":32,
         "drop_out": 0.2,
-        "activation": "relu"
+        "activation": "leakyrelu",
+        "l1_size":1024
     },
     "network_params":{
+        "gpu_fraction": 0.2,
         "model":"nn_1l",
         "loss":"categorical_crossentropy",
         "learning_rate":0.0001,
         "batch_size":128,
-        "epochs":100,
+        "epochs":45,
         "n_kfolds":10,
         "verbose":1
     },

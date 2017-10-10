@@ -95,6 +95,7 @@ EXPORT_COMMAND=export
 #FILES
 TRAIN_FILE=train_pipeline.py
 TEST_FILE=test_pipeline.py
+LOGISTIC_FILE=logistic_regression.py
 
 
 ##############################################################################
@@ -114,10 +115,19 @@ test te:
 	@$(EXPORT_COMMAND) CUDA_VISIBLE_DEVICES=$(CUDA_VISIBLE_DEVICES)
 	@$(PYTHON_COMMAND) $(TEST_FILE) -c $(CONFIG_FILE)
 
+logistic l:
+	@echo "[Train] Training logistic"
+	@$(PYTHON_COMMAND) $(LOGISTIC_FILE)
+
+
 
 ##############################################################################
 ########################### DOCKER COMMANDS ##################################
 ##############################################################################
+
+run-logistic rl: docker-print
+	@$(DOCKER_RUN_COMMAND) bash -c "make logistic"; \
+	status=$$
 
 run-train rc: docker-print
 	@$(DOCKER_RUN_COMMAND) bash -c "make train CUDA_VISIBLE_DEVICES=$(CUDA_VISIBLE_DEVICES)  CONFIG_FILE=$(CONFIG_FILE)"; \
