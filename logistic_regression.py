@@ -100,8 +100,7 @@ def firt_task(x_train,x_test,y_train,y_test):
 	#[Parallel(n_jobs=1)]: Done  10 out of  10 | elapsed:  5.4min finished
 	#[Parallel(n_jobs=1)]: Done  10 out of  10 | elapsed:  5.2min finished
 	#[Parallel(n_jobs=1)]: Done  10 out of  10 | elapsed: 53.3min finished
-	#[ 0.38883333  0.39416667  0.37966667  0.39983333  0.39183333  0.38566667
-	#  0.38883333  0.38666667  0.38966667  0.38333333]
+	#[ 0.38883333  0.39416667  0.37966667  0.39983333  0.39183333  0.38566667 0.38883333  0.38666667  0.38966667  0.38333333]
 
 
 def second_task(x_train,x_test,y_train,y_test):
@@ -159,8 +158,7 @@ def second_task(x_train,x_test,y_train,y_test):
 	#[Parallel(n_jobs=1)]: Done   1 out of   1 | elapsed:  1.8min finished
 	#[Parallel(n_jobs=1)]: Done   1 out of   1 | elapsed:  1.8min finished
 	#[Parallel(n_jobs=1)]: Done  10 out of  10 | elapsed: 20.2min finished
-	#[ 0.399       0.39733333  0.38966667  0.411       0.408       0.40233333
-	#  0.39916667  0.40366667  0.40883333  0.39316667]
+	#[ 0.399       0.39733333  0.38966667  0.411       0.408       0.40233333 0.39916667  0.40366667  0.40883333  0.39316667]
 
 if __name__ == '__main__':
 	#firt_task()
